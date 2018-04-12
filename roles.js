@@ -3,6 +3,7 @@ module.exports = {
   CONTROLLER_UPGRADER: "supplyController",
   BUILDER: "build",
   REPAIR: "repair",
+  CLAIM: "claim",
   harvest: function (creep) {
     setHarvestingMemory(creep);
 
@@ -59,6 +60,13 @@ module.exports = {
 
       executeActionOrGoThereFirst(creep, constructionSite, target => creep.build(target));
     }
+  },
+  claim: function (creep) {
+    const flag = Game.flags.filter(flag => flag.color === COLOR_RED)[0];
+
+    const exitDirection = creep.findExit(creep.room, flag.room);
+    const exit = creep.pos.findClosestByRange(exitDirection);
+    executeActionOrGoThereFirst(creep, exit, otherRoom => creep.claimController(creep.room.controller));
   }
 };
 

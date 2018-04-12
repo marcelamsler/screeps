@@ -3,7 +3,6 @@ const roles = require('roles');
 
 module.exports.loop = () => {
   doAllXTicks("spawnAndDeleteCreeps", 5, () => {
-    console.log("trying to spawn creeps");
     spawnCreeps();
     cleanMemory();
   });
@@ -31,13 +30,15 @@ module.exports.loop = () => {
 function spawnCreeps() {
   let maxHarvesterCount = 8;
   let maxControllerUpgrader = 5;
-  const maxBuilders = 8;
+  const maxBuilders = 3;
   const maxMaintainers = 3;
+  const maxClaimers = 2;
   const randomNumber = Math.floor((Math.random() * 10000) + 1);
   const currentHarvesterCount = Object.keys(Game.creeps).map(name => Game.creeps[name]).filter(creep => creep.memory.role === roles.HARVESTER).length;
   const currentControllerUpgraderCount = Object.keys(Game.creeps).map(name => Game.creeps[name]).filter(creep => creep.memory.role === roles.CONTROLLER_UPGRADER).length;
   const currentBuildersCount = Object.keys(Game.creeps).map(name => Game.creeps[name]).filter(creep => creep.memory.role === roles.BUILDER).length;
   const currentMaintainerCount = Object.keys(Game.creeps).map(name => Game.creeps[name]).filter(creep => creep.memory.role === roles.REPAIR).length;
+  const currentClaimerCount = Object.keys(Game.creeps).map(name => Game.creeps[name]).filter(creep => creep.memory.role === roles.CLAIM).length;
   let name = "";
   let bodyParts = [];
   let role;
@@ -70,6 +71,13 @@ function spawnCreeps() {
     bodyParts.push(WORK);
     bodyParts.push(CARRY);
     role = roles.REPAIR;
+  } else if (currentClaimerCount < maxClaimers) {
+    name = "Claimer" + randomNumber;
+    bodyParts.push(MOVE);
+    bodyParts.push(CLAIM);
+    bodyParts.push(CLAIM);
+    bodyParts.push(MOVE);
+    role = roles.CLAIM;
   } else {
     name = "Upgrader" + randomNumber;
     bodyParts.push(MOVE);
