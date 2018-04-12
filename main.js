@@ -31,7 +31,7 @@ function spawnCreeps() {
   let maxHarvesterCount = 8;
   let maxControllerUpgrader = 5;
   const maxBuilders = 3;
-  const maxMaintainers = 3;
+  const maxMaintainers = 1;
   const maxClaimers = 2;
   const randomNumber = Math.floor((Math.random() * 10000) + 1);
   const currentHarvesterCount = Object.keys(Game.creeps).map(name => Game.creeps[name]).filter(creep => creep.memory.role === roles.HARVESTER).length;
@@ -71,7 +71,7 @@ function spawnCreeps() {
     bodyParts.push(WORK);
     bodyParts.push(CARRY);
     role = roles.REPAIR;
-  } else if (currentClaimerCount < maxClaimers) {
+  } else if (currentClaimerCount < maxClaimers && Game.gcl.level > Object.keys(Game.spawns)) {
     name = "Claimer" + randomNumber;
     bodyParts.push(MOVE);
     bodyParts.push(CLAIM);

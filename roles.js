@@ -66,7 +66,41 @@ module.exports = {
 
     const exitDirection = creep.findExit(creep.room, flag.room);
     const exit = creep.pos.findClosestByRange(exitDirection);
-    executeActionOrGoThereFirst(creep, exit, otherRoom => creep.claimController(creep.room.controller));
+
+    if (creep.room.name !== flag.room.name) {
+      creep.moveTo(exit);
+    } else {
+      const claimResult = creep.claimController(creep.room.controller);
+
+      if (claimResult === ERR_NOT_IN_RANGE) {
+        // move towards the controller
+        creep.moveTo(creep.room.controller);
+      } else if (claimResult === ERR_GCL_NOT_ENOUGH) {
+        creep.say('NO GCL->reserving');
+        let reserveResult = creep.reserveController(creep.room.controller);
+        if (reserveResult !== 0) {
+          console.log('Claimer reserving error: ' + reserveResult);
+          creep.moveTo(creep.room.controller);
+        }
+      } else if (claimResult !== 0) {
+        console.log('Claimer error: ' + claimResult);
+      } else if (claimResult === 0) {
+        const energySource = creep.room.find(FIND_SOURCES_ACTIVE);
+
+        let spawnPosition = {
+          x: energySource.x + 2,
+          y: energySource.y + 2
+        };
+
+        const range = 20;
+
+        while (creep.room.createConstructionSite(spawnPosition.x, spawnPosition.y, STRUCTURE_SPAWN) !== 0) {
+          spawnPosition.x = Math.floor(Math.random() * range) - range / 2;
+          spawnPosition.y = Math.floor(Math.random() * range) - range / 2;
+        }
+
+      }
+    }
   }
 };
 
